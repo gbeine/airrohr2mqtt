@@ -14,7 +14,7 @@ class Daemon:
 	def run(self):
 		while True:
 			self._airrohr.update_and_publish(self._mqtt)
-			time.sleep(5)
+			time.sleep(30)
 
 	def _init_mqtt(self):
 		self._mqtt = mqtt.Mqtt(self._config.mqtt())
