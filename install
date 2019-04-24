@@ -1,0 +1,7 @@
+#!/bin/sh
+
+python3 -m venv .
+
+. bin/activate
+pip install paho.mqtt pyyaml
+pip install -e airrohr2mqtt
