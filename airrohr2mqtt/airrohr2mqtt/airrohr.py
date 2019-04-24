@@ -16,7 +16,6 @@ class airrohr:
 		mqtt.publish("software_version", data["software_version"])
 		mqtt.publish("age", data["age"])
 		for value_type, value in data["data"].items():
-			print(value_type)
 			topic = self._sensors[value_type]
 			mqtt.publish(topic, value)
 
