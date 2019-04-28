@@ -4,6 +4,8 @@ mqtt:
     user: user
     password: secret
     topic: "mqtt/topic/for/airrohr"
+    qos: 1
+    retain: true
 airrohr:
     host: "localhost"
     port: 80
