@@ -59,5 +59,8 @@ class airrohr:
 
 
 	def _fetch_json(self):
-		request = urllib.request.urlopen(self._url)
-		return json.loads(request.read().decode())
+		try:
+			request = urllib.request.urlopen(self._url)
+			return json.loads(request.read().decode())
+		except urllib2.URLError, err:
+			print "Some other error happened:", err.reason
