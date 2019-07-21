@@ -62,5 +62,5 @@ class airrohr:
 		try:
 			request = urllib.request.urlopen(self._url)
 			return json.loads(request.read().decode())
-		except urllib2.URLError, err:
-			print "Some other error happened:", err.reason
+		except urllib2.URLError as  err:
+			print("Some other error happened:", err.reason)
