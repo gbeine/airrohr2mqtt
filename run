@@ -1,0 +1,8 @@
+!/bin/sh
+
+touch ${LOGDIR}/.tmpfs
+
+. bin/activate
+
+exec bin/airrohr2mqtt
+
