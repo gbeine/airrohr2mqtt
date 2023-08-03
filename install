@@ -1,7 +1,8 @@
 #!/bin/sh
 
-python3 -m venv .
+python3 -m venv venv
 
-. bin/activate
-pip install wheel paho-mqtt pyyaml
-pip install -e airrohr2mqtt
+. venv/bin/activate
+
+pip install --upgrade pip
+pip install -r requirements.txt

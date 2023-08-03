@@ -1,0 +1,143 @@
+#!/usr/bin/env python
+
+import argparse
+import json
+import os
+import paho.mqtt.client as mqtt
+
+from bottle import request, route, post, run
+
+
+mqtt_client = None
+daemon_args = None
+
+
+def extract_request_body():
+    body = request.body
+    string = body.getvalue().decode('utf-8')
+    return string
+
+
+def extract_request_data():
+    json_string = extract_request_body()
+    data = json.loads(json_string)
+    return data
+
+
+@route('/')
+def index():
+    return "Hello World!"
+
+
+@post('/airrohr/<sensor_id>')
+def airrohr(sensor_id):
+    data = extract_request_data()
+
+    topic_base = "{}/{}".format(daemon_args.mqtt_topic, sensor_id)
+    mqtt_client.publish("{}/{}".format(topic_base,'esp8266id'), data['esp8266id'])
+    mqtt_client.publish("{}/{}".format(topic_base,'software_version'), data['software_version'])
+
+    for value in data['sensordatavalues']:
+        topic = "{}/{}".format(topic_base, value['value_type'].lower())
+        mqtt_client.publish(topic, value['value'])
+    return "OK"
+
+
+def start_mqtt():
+    global daemon_args
+    mqtt_client = mqtt.Client(daemon_args.mqtt_clientid)
+    if daemon_args.verbose:
+        mqtt_client.enable_logger()
+    if daemon_args.mqtt_user is not None and daemon_args.mqtt_password is not None:
+        mqtt_client.username_pw_set(daemon_args.mqtt_user, daemon_args.mqtt_password)
+    mqtt_client.connect(daemon_args.mqtt_host, daemon_args.mqtt_port, daemon_args.mqtt_keepalive)
+    mqtt_client.loop_start()
+    return mqtt_client
+
+
+def start_http():
+    global daemon_args
+    run(host=daemon_args.http_host, port=daemon_args.http_port, debug=daemon_args.verbose)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+            prog='airrohr2mqtt',
+            description='Send the data from Feinstaubsensor HTTP push to MQTT',
+            epilog='Have a lot of fun!')
+    parser.add_argument('-m', '--mqtt_host', type=str,
+            default='localhost',
+            help='The hostname of the MQTT server. Default is localhost')
+    parser.add_argument('--mqtt_port', type=int,
+            default=1883,
+            help='The port of the MQTT server. Default is 1883')
+    parser.add_argument('--mqtt_keepalive', type=int,
+            default=30,
+            help='The keep alive interval for the MQTT server connection in seconds. Default is 30')
+    parser.add_argument('--mqtt_clientid', type=str,
+            default='fronius2mqtt',
+            help='The clientid to send to the MQTT server. Default is airrohr2mqtt')
+    parser.add_argument('-u', '--mqtt_user', type=str,
+            help='The username for the MQTT server connection.')
+    parser.add_argument('-p', '--mqtt_password', type=str,
+            help='The password for the MQTT server connection.')
+    parser.add_argument('-t', '--mqtt_topic', type=str,
+            default='airrohr',
+            help='The topic to publish MQTT message. Default is airrohr')
+    parser.add_argument('--http_host', type=str,
+            default='localhost',
+            help='The address of the HTTP server. Default is localhost')
+    parser.add_argument('--http_port', type=int,
+            default=8080,
+            help='The port of the HTTP server. Default is 8080')
+    parser.add_argument('-c', '--config', type=str,
+            default='/etc/airrohr2mqtt.conf',
+            help='The path to the config file. Default is /etc/airrohr2mqtt.conf')
+    parser.add_argument('-v', '--verbose',
+            default=False,
+            action='store_true',
+            help='Be verbose while running.')
+    args = parser.parse_args()
+    return args
+
+
+def parse_config():
+    global daemon_args
+
+    if not os.path.isfile(daemon_args.config):
+        return
+
+    with open(daemon_args.config, "r") as config_file:
+        data = json.load(config_file)
+        if 'mqtt_host' in data:
+            daemon_args.mqtt_host = data['mqtt_host']
+        if 'mqtt_port' in data:
+            daemon_args.mqtt_port = int(data['mqtt_port'])
+        if 'mqtt_keepalive' in data:
+            daemon_args.mqtt_keepalive = int(data['mqtt_keepalive'])
+        if 'mqtt_clientid' in data:
+            daemon_args.mqtt_clientid = data['mqtt_clientid']
+        if 'mqtt_user' in data:
+            daemon_args.mqtt_user = data['mqtt_user']
+        if 'mqtt_password' in data:
+            daemon_args.mqtt_password = data['mqtt_password']
+        if 'mqtt_topic' in data:
+            daemon_args.mqtt_topic = data['mqtt_topic']
+        if 'http_host' in data:
+            daemon_args.http_host = data['http_host']
+        if 'http_port' in data:
+            daemon_args.http_port = int(data['http_port'])
+        if 'verbose' in data:
+            daemon_args.verbose = data['verbose']
+
+
+def main():
+    global daemon_args, mqtt_client
+    daemon_args = parse_args()
+    parse_config()
+    mqtt_client = start_mqtt()
+    start_http()
+
+
+if __name__ == "__main__":
+    main()

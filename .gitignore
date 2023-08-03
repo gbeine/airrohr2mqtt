@@ -1,9 +1,0 @@
-__pycache__
-bin
-lib
-share
-airrohr2mqtt.bbprojectd
-pip-selfcheck.json
-pyvenv.cfg
-airrohr2mqtt/airrohr2mqtt.egg-info
-airrohr2mqtt.yaml

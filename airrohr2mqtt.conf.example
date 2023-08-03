@@ -1,13 +1,6 @@
-[program:airrohr2mqtt]
-command=/opt/service/airrohr2mqtt/run
-process_name=%(program_name)s
-directory=/opt/service/airrohr2mqtt
-umask=022
-autostart=true
-redirect_stderr=true
-stdout_logfile=/var/log/airrohr2mqtt/main.log
-stdout_logfile_maxbytes=2MB
-stdout_logfile_backups=1
-stdout_capture_maxbytes=0
-stdout_events_enabled=false
-environment=LOGDIR=/var/log/airrohr2mqtt
+{
+    "http_host": "0.0.0.0",
+    "http_port": "80",
+    "mqtt_password": "t0p_s3cr3t",
+    "mqtt_user": "airrohr2mqtt"
+}

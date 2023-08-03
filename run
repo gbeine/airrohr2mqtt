@@ -1,8 +1,5 @@
 #!/bin/sh
 
-touch ${LOGDIR}/.tmpfs
+. venv/bin/activate
 
-. bin/activate
-
-exec bin/airrohr2mqtt
-
+exec /usr/bin/env python airrohr2mqtt
