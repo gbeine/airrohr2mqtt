@@ -75,7 +75,7 @@ def parse_args():
             default=30,
             help='The keep alive interval for the MQTT server connection in seconds. Default is 30')
     parser.add_argument('--mqtt_clientid', type=str,
-            default='fronius2mqtt',
+            default='airrohr2mqtt',
             help='The clientid to send to the MQTT server. Default is airrohr2mqtt')
     parser.add_argument('-u', '--mqtt_user', type=str,
             help='The username for the MQTT server connection.')
