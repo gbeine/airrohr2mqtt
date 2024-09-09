@@ -63,6 +63,11 @@ Each configuration option is also available as command line argument.
 
 Use the URL `http://<http_host>:<http_port>/airrohr/<sensor_id>` for the push notification.
 
+## Disclaimer
+
+''Attention:'' Please be aware that the data is published over plain HTTP by this solution.
+Use with care ond only if you know what you're doing.
+
 ## Running airrohr2mqtt
 
 I use [systemd](https://systemd.io/) to manage my local services.
