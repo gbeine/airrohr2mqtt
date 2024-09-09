@@ -58,13 +58,12 @@ Each configuration option is also available as command line argument.
 | `http_port`              | 8080                     | `--http_port`              | The port of the HTTP server. Default is 8080                                           |
 | `verbose`                | -                        | `-v`, `--verbose`          | Be verbose while running.                                                              |
 | -                        | '/etc/airrohr2mqtt.conf' | `-c`, `--config`           | The path to the config file.                                                           |
-| `items`                  | see below                | -                          | The configuration for the items on the KNX bus.                                        |
 
 ### airrohr configuration
 
 Use the URL `http://<http_host>:<http_port>/airrohr/<sensor_id>` for the push notification.
 
-## Running knx2mqtt
+## Running airrohr2mqtt
 
 I use [systemd](https://systemd.io/) to manage my local services.
 
